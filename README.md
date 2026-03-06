@@ -14,7 +14,7 @@ The app combines modern design principles with warm, editorial styling to create
 - **Authentication:** Firebase Auth
 - **Database:** Firebase Firestore
 - **Deployment:** Vercel
-- **Fonts:** Playfair Display (headings), DM Mono (body/labels)
+- **Fonts:** Playfair Display (headings), Outfit (body/labels)
 
 ## Planned Features
 
