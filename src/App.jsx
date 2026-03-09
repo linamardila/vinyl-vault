@@ -2,7 +2,6 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Collection from './pages/Collection';
 import Login from './pages/Login';
-import './App.css';
 
 function App() {
   return (
