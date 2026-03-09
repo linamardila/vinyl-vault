@@ -56,6 +56,26 @@
         font-family: var(--font-heading);
         font-size: 1.5rem;
         letter-spacing: .05em;
+        text-decoration: none;
+        color: var(--text);
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 2rem;
+    }
+
+    .nav-links a {
+        color: var(--text);
+        text-decoration: none;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: .1em;
+        transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+        color: var(--accent);
     }
 
     nav .badge {
