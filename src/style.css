@@ -232,7 +232,7 @@
         position: relative;
         overflow: hidden;
     }
-
+    
     .feature-num {
         font-family: var(--font-mono);
         font-size: 0.75rem;
