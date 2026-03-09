@@ -1,0 +1,30 @@
+/* Navbar Component Styles */
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-email {
+  color: #f0e6d0;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+}
+
+.logout-btn {
+  background: none;
+  border: 1px solid #7a6e62;
+  color: #7a6e62;
+  padding: 0.25rem 0.75rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  border-color: #c8853a;
+  color: #c8853a;
+}
