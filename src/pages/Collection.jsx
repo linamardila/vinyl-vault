@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
+import './Collection.css';
 
 const Collection = () => {
   const [records, setRecords] = useState([]);
@@ -11,6 +12,11 @@ const Collection = () => {
     coverArtUrl: '',
     status: 'Owned',
   });
+
+  // Filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [genreFilter, setGenreFilter] = useState('All Genres');
+  const [statusFilter, setStatusFilter] = useState('All');
 
   // Load records from localStorage on mount
   useEffect(() => {
@@ -67,6 +73,25 @@ const Collection = () => {
   const handleDelete = (id) => {
     setRecords(records.filter(record => record.id !== id));
   };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setGenreFilter('All Genres');
+    setStatusFilter('All');
+  };
+
+  // Filter records based on search term, genre, and status
+  const filteredRecords = records.filter(record => {
+    const matchesSearch = searchTerm === '' ||
+      record.artist.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      record.albumName.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesGenre = genreFilter === 'All Genres' || record.genre === genreFilter;
+    
+    const matchesStatus = statusFilter === 'All' || record.status === statusFilter;
+    
+    return matchesSearch && matchesGenre && matchesStatus;
+  });
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -178,12 +203,69 @@ const Collection = () => {
         </section>
 
         <section className="records-grid-section">
-          <h2>Vault ({records.length})</h2>
+          <div className="filters-bar">
+            <div className="filter-group">
+              <label htmlFor="search">Search</label>
+              <input
+                type="text"
+                id="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by artist or album..."
+              />
+            </div>
+
+            <div className="filter-group">
+              <label htmlFor="genre-filter">Genre</label>
+              <select
+                id="genre-filter"
+                value={genreFilter}
+                onChange={(e) => setGenreFilter(e.target.value)}
+              >
+                <option value="All Genres">All Genres</option>
+                <option value="Rock">Rock</option>
+                <option value="Jazz">Jazz</option>
+                <option value="Hip-Hop">Hip-Hop</option>
+                <option value="Electronic">Electronic</option>
+                <option value="Classical">Classical</option>
+                <option value="Pop">Pop</option>
+                <option value="R&B">R&B</option>
+                <option value="Folk">Folk</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label htmlFor="status-filter">Status</label>
+              <select
+                id="status-filter"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="All">All</option>
+                <option value="Owned">Owned</option>
+                <option value="Wishlist">Wishlist</option>
+                <option value="Loaned Out">Loaned Out</option>
+              </select>
+            </div>
+
+            <button
+              className="clear-filters-btn"
+              onClick={clearFilters}
+              disabled={searchTerm === '' && genreFilter === 'All Genres' && statusFilter === 'All'}
+            >
+              Clear Filters
+            </button>
+          </div>
+
+          <h2>Vault ({filteredRecords.length}{records.length !== filteredRecords.length ? ` of ${records.length}` : ''})</h2>
           {records.length === 0 ? (
             <p className="empty-state">No records yet. Add your first vinyl!</p>
+          ) : filteredRecords.length === 0 ? (
+            <p className="empty-state">No records match your search.</p>
           ) : (
             <div className="records-grid">
-              {records.map((record) => (
+              {filteredRecords.map((record) => (
                 <div key={record.id} className="record-card">
                   <div className="record-cover">
                     {record.coverArtUrl ? (
