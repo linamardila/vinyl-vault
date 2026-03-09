@@ -12,6 +12,29 @@
   margin-bottom: 1.5rem;
 }
 
+.login-prompt {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.login-prompt h1 {
+  margin-bottom: 2rem;
+}
+
+.login-prompt p {
+  color: #7a6e62;
+  font-size: 1.1rem;
+}
+
+.login-prompt a {
+  color: #c8853a;
+  text-decoration: none;
+}
+
+.login-prompt a:hover {
+  text-decoration: underline;
+}
+
 .add-record-section {
   margin-bottom: 4rem;
   background: #1a1714;

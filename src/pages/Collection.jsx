@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { db } from '../firebase';
+import { collection, addDoc, deleteDoc, doc, query, where, onSnapshot } from 'firebase/firestore';
+import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import './Collection.css';
 
 const Collection = () => {
   const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     artist: '',
     albumName: '',
@@ -18,22 +23,38 @@ const Collection = () => {
   const [genreFilter, setGenreFilter] = useState('All Genres');
   const [statusFilter, setStatusFilter] = useState('All');
 
-  // Load records from localStorage on mount
-  useEffect(() => {
-    const savedRecords = localStorage.getItem('vinylVault_records');
-    if (savedRecords) {
-      try {
-        setRecords(JSON.parse(savedRecords));
-      } catch (error) {
-        console.error('Error loading records:', error);
-      }
-    }
-  }, []);
+  const { currentUser } = useAuth();
 
-  // Save records to localStorage whenever they change
+  // Load records from Firestore on mount and when user changes
   useEffect(() => {
-    localStorage.setItem('vinylVault_records', JSON.stringify(records));
-  }, [records]);
+    if (!currentUser) {
+      setRecords([]);
+      setLoading(false);
+      return;
+    }
+
+    const q = query(
+      collection(db, 'records'),
+      where('userId', '==', currentUser.uid)
+    );
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const recordsData = [];
+      querySnapshot.forEach((doc) => {
+        recordsData.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      setRecords(recordsData);
+      setLoading(false);
+    }, (error) => {
+      console.error('Error loading records:', error);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, [currentUser]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -43,35 +64,51 @@ const Collection = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    if (!currentUser) {
+      alert('Please log in to add records');
+      return;
+    }
+
     if (!formData.artist.trim() || !formData.albumName.trim()) {
       alert('Please fill in artist and album name');
       return;
     }
 
-    const newRecord = {
-      id: Date.now(),
-      ...formData,
-      year: parseInt(formData.year),
-    };
+    try {
+      await addDoc(collection(db, 'records'), {
+        ...formData,
+        year: parseInt(formData.year),
+        userId: currentUser.uid,
+        createdAt: new Date()
+      });
 
-    setRecords([newRecord, ...records]);
-    
-    // Reset form
-    setFormData({
-      artist: '',
-      albumName: '',
-      year: new Date().getFullYear(),
-      genre: 'Rock',
-      coverArtUrl: '',
-      status: 'Owned',
-    });
+      // Reset form
+      setFormData({
+        artist: '',
+        albumName: '',
+        year: new Date().getFullYear(),
+        genre: 'Rock',
+        coverArtUrl: '',
+        status: 'Owned',
+      });
+    } catch (error) {
+      console.error('Error adding record:', error);
+      alert('Error adding record. Please try again.');
+    }
   };
 
-  const handleDelete = (id) => {
-    setRecords(records.filter(record => record.id !== id));
+  const handleDelete = async (id) => {
+    if (!currentUser) return;
+
+    try {
+      await deleteDoc(doc(db, 'records', id));
+    } catch (error) {
+      console.error('Error deleting record:', error);
+      alert('Error deleting record. Please try again.');
+    }
   };
 
   const clearFilters = () => {
@@ -85,11 +122,11 @@ const Collection = () => {
     const matchesSearch = searchTerm === '' ||
       record.artist.toLowerCase().includes(searchTerm.toLowerCase()) ||
       record.albumName.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesGenre = genreFilter === 'All Genres' || record.genre === genreFilter;
-    
+
     const matchesStatus = statusFilter === 'All' || record.status === statusFilter;
-    
+
     return matchesSearch && matchesGenre && matchesStatus;
   });
 
@@ -106,12 +143,26 @@ const Collection = () => {
     }
   };
 
+  if (!currentUser) {
+    return (
+      <div>
+        <Navbar />
+        <div className="collection-container">
+          <div className="login-prompt">
+            <h1>My Collection</h1>
+            <p>Please <Link to="/login">log in</Link> to view your collection</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Navbar />
       <div className="collection-container">
         <h1>My Collection</h1>
-        
+
         <section className="add-record-section">
           <h2>Add a Record</h2>
           <form onSubmit={handleSubmit} className="add-record-form">
@@ -259,7 +310,9 @@ const Collection = () => {
           </div>
 
           <h2>Vault ({filteredRecords.length}{records.length !== filteredRecords.length ? ` of ${records.length}` : ''})</h2>
-          {records.length === 0 ? (
+          {loading ? (
+            <p className="empty-state">Loading your vault...</p>
+          ) : records.length === 0 ? (
             <p className="empty-state">No records yet. Add your first vinyl!</p>
           ) : filteredRecords.length === 0 ? (
             <p className="empty-state">No records match your search.</p>
