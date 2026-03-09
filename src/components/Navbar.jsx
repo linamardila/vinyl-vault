@@ -18,6 +18,7 @@ const Navbar = () => {
       <Link to="/" className="logo">Vinyl Vault</Link>
       <div className="nav-links">
         <Link to="/collection">My Collection</Link>
+        <Link to="/stats">Stats</Link>
         {currentUser ? (
           <div className="user-section">
             <span className="user-email">{currentUser.email}</span>

@@ -1,0 +1,130 @@
+/* Stats Page Styles */
+.stats-container {
+  padding: 4rem 6rem;
+  background: #0e0c0a;
+  min-height: calc(100vh - 80px);
+}
+
+.stats-container h1 {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 3rem;
+  margin-bottom: 3rem;
+  color: #f0e6d0;
+}
+
+.login-prompt {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.login-prompt h1 {
+  margin-bottom: 2rem;
+  color: #f0e6d0;
+}
+
+.login-prompt p {
+  color: #7a6e62;
+  font-size: 1.1rem;
+}
+
+.login-prompt a {
+  color: #c8853a;
+  text-decoration: none;
+}
+
+.login-prompt a:hover {
+  text-decoration: underline;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.loading-state p {
+  color: #7a6e62;
+  font-size: 1.1rem;
+}
+
+/* Stats Strip */
+.stats-strip {
+  display: flex;
+  justify-content: space-around;
+  padding: 3rem 0;
+  border-top: 1px solid #c8853a;
+  border-bottom: 1px solid #c8853a;
+  margin-bottom: 3rem;
+}
+
+.stats-strip div {
+  text-align: center;
+}
+
+.stats-strip div h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  color: #c8853a;
+  margin: 0;
+}
+
+.stats-strip div div {
+  color: #7a6e62;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 0.5rem;
+}
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.chart-card {
+  background: #1a1714;
+  padding: 2rem;
+}
+
+.chart-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #f0e6d0;
+  text-align: center;
+}
+
+.no-data {
+  color: #7a6e62;
+  text-align: center;
+  padding: 2rem;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media(max-width: 768px) {
+  .stats-container {
+    padding: 2rem 1.5rem;
+  }
+
+  .stats-container h1 {
+    font-size: 2rem;
+  }
+
+  .stats-strip {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem 0;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card {
+    padding: 1.5rem;
+  }
+}
