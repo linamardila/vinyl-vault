@@ -233,18 +233,6 @@
         overflow: hidden;
     }
 
-    .feature-card:hover {
-        background: #2e2820;
-    }
-
-    .feature-card:hover .feature-title {
-        color: var(--accent);
-    }
-
-    .feature-card:hover .feature-line {
-        width: 80px;
-    }
-
     .feature-num {
         font-family: var(--font-mono);
         font-size: 0.75rem;
