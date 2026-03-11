@@ -26,18 +26,6 @@ const Home = () => {
           </div>
         </section>
         <section className="stats">
-          <div>
-            <h2>0</h2>
-            <div>Your Collection</div>
-          </div>
-          <div>
-            <h2>0</h2>
-            <div>Genres</div>
-          </div>
-          <div>
-            <h2>0</h2>
-            <div>Artists</div>
-          </div>
         </section>
         <section className="features">
           <div className="feature-card">
