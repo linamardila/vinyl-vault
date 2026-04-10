@@ -19,6 +19,23 @@ Vinyl Vault is a full-stack vinyl record collection tracker where users can cata
 6. User-specific data — each account has its own private vault (Firestore)
 7. Responsive design for mobile and desktop
 
+## Week 12 AI Feature
+**AI-Powered Description Generator** — Each record card now includes a "Generate Description" button that creates evocative, creative vinyl record store reviews using a locally running Ollama instance.
+
+How it works:
+- Click the "Generate Description" button on any record card
+- The app sends the record's artist, album, year, and genre to an Ollama API endpoint at `http://localhost:11434/api/generate` using the llama3.2 model
+- The response streams back and displays character by character below the button
+- A "Generating..." loading state shows while the request is in progress
+
+To use this feature:
+1. Install Ollama from [ollama.com](https://ollama.com)
+2. Run `ollama pull llama3.2` to download the model
+3. Run `ollama serve` to start the Ollama server (keep it running)
+4. Start your app with `npm run dev`
+
+The model generates creative, atmospheric descriptions styled as vintage record store reviews based only on the metadata provided—no external knowledge required.
+
 ## Architecture Overview
 - Frontend: React SPA with react-router-dom for client-side routing
 - Auth: Firebase Auth with a React context (AuthContext) that wraps the entire app

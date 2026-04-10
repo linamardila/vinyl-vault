@@ -4,6 +4,7 @@ import { db } from '../firebase';
 import { collection, addDoc, deleteDoc, doc, query, where, onSnapshot } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
+import { generateRecordDescription } from '../utils/ollamaService';
 import './Collection.css';
 
 const Collection = () => {
@@ -22,6 +23,10 @@ const Collection = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [genreFilter, setGenreFilter] = useState('All Genres');
   const [statusFilter, setStatusFilter] = useState('All');
+
+  // AI description states
+  const [generatedDescriptions, setGeneratedDescriptions] = useState({});
+  const [loadingIds, setLoadingIds] = useState(new Set());
 
   const { currentUser } = useAuth();
 
@@ -108,6 +113,50 @@ const Collection = () => {
     } catch (error) {
       console.error('Error deleting record:', error);
       alert('Error deleting record. Please try again.');
+    }
+  };
+
+  const handleGenerateDescription = async (record) => {
+    const { id, artist, albumName, year, genre } = record;
+
+    // Prevent multiple simultaneous requests for the same record
+    if (loadingIds.has(id)) return;
+
+    // Set loading state
+    setLoadingIds(prev => new Set(prev).add(id));
+    setGeneratedDescriptions(prev => ({
+      ...prev,
+      [id]: ''
+    }));
+
+    try {
+      await generateRecordDescription(
+        artist,
+        albumName,
+        year,
+        genre,
+        (chunk) => {
+          // Add chunk to the description as it streams in
+          setGeneratedDescriptions(prev => ({
+            ...prev,
+            [id]: (prev[id] || '') + chunk
+          }));
+        }
+      );
+    } catch (error) {
+      console.error('Error generating description:', error);
+      const errorMessage = 'Failed to generate description. Make sure Ollama is running at http://localhost:11434';
+      setGeneratedDescriptions(prev => ({
+        ...prev,
+        [id]: errorMessage
+      }));
+    } finally {
+      // Clear loading state
+      setLoadingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
     }
   };
 
@@ -342,6 +391,20 @@ const Collection = () => {
                     >
                       {record.status}
                     </div>
+                    
+                    <button
+                      className="generate-description-btn"
+                      onClick={() => handleGenerateDescription(record)}
+                      disabled={loadingIds.has(record.id)}
+                    >
+                      {loadingIds.has(record.id) ? 'Generating...' : 'Generate Description'}
+                    </button>
+
+                    {generatedDescriptions[record.id] && (
+                      <div className="generated-description">
+                        {generatedDescriptions[record.id]}
+                      </div>
+                    )}
                   </div>
                   <button
                     className="delete-btn"
