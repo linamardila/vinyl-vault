@@ -81,3 +81,10 @@ a lot of moving pieces between Auth, Firestore, security rules, and environment
 variables but working through it with AI assistance made it manageable. I feel 
 much more confident deploying a full-stack app now than I did at the start of this 
 project.
+
+## Screenshots
+
+![Collection View](screenshots/collection.png)
+![Stats Dashboard](screenshots/dashboard.png)
+![Home View](screenshots/home.png)
+![Login View](screenshots/login.png)
